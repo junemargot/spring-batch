@@ -4,6 +4,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,10 +16,12 @@ public class MainController {
 
   private final JobLauncher jobLauncher;
   private final JobRegistry jobRegistry;
+  private final JobRepository jobRepository;
 
-  public MainController(JobLauncher jobLauncher, JobRegistry jobRegistry) {
+  public MainController(JobLauncher jobLauncher, JobRegistry jobRegistry, JobRepository jobRepository) {
     this.jobLauncher = jobLauncher;
     this.jobRegistry = jobRegistry;
+    this.jobRepository = jobRepository;
   }
 
   @GetMapping("/first")
@@ -31,6 +34,18 @@ public class MainController {
 
     jobLauncher.run(jobRegistry.getJob("firstJob"), jobParameters);
 
-    return "BATCH PROCESS OK";
+    return "FIRST BATCH PROCESS OK";
+  }
+
+  @GetMapping("/second")
+  public String secondApi(@RequestParam("value") String value) throws Exception{
+
+    JobParameters jobParameters = new JobParametersBuilder()
+            .addString("date", value)
+            .toJobParameters();
+
+    jobLauncher.run(jobRegistry.getJob("secondJob"), jobParameters);
+
+    return "SECOND BATCH PROCESS OK";
   }
 }
