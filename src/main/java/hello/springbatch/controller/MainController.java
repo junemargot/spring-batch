@@ -60,4 +60,16 @@ public class MainController {
 
     return "THIRD BATCH PROCESS OK";
   }
+
+  @GetMapping("/fourth")
+  public String fourthApi(@RequestParam("value") String value) throws Exception{
+
+    JobParameters jobParameters = new JobParametersBuilder()
+            .addString("date", value)
+            .toJobParameters();
+
+    jobLauncher.run(jobRegistry.getJob("fourthJob"), jobParameters);
+
+    return "FOURTH BATCH PROCESS OK";
+  }
 }
